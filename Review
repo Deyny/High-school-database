@@ -1,0 +1,212 @@
+# Database Project
+
+## Topic: Database for a Higher Education Institution
+
+**Authors:** Rafał Dubiel, Daniel Antolak
+
+---
+
+## Project Requirements
+
+* **Concept:** Clear and concise description of the proposed solution.
+* **Use Case Documentation:** Detailed UML use case diagrams illustrating user interactions.
+* **Schema Documentation:** Comprehensive documentation of the physical database schema, including all necessary primary keys. Any notation can be used.
+* **Normalization:** Ensure the schema adheres to the third normal form (3NF).
+* **Foreign Keys:** Define foreign keys to maintain data integrity.
+* **Implementation:** Implement the schema using a database technology of your choice.
+* **Diagram:** Provide a visual representation of the schema elements using a tool compatible with the chosen technology.
+* **SQL Code:** Include SQL code for generating the schema and populating it with sample data.
+
+---
+
+## Project Guidelines
+
+### Goals
+
+* The university consists of multiple departments.
+* Each department can offer an unlimited number of courses.
+* Many lecturers can work in a single department, but each lecturer can only be associated with one department.
+* Each department has a head, who is also a lecturer and can only lead one department.
+* A lecturer can teach multiple courses, but a course can only have one assigned lecturer.
+* Students can enroll in as many courses as they wish, and courses can have an unlimited number of students.
+
+### Tables
+
+* Departments
+* Courses
+* Lecturers
+* Department Heads
+* Enrollments
+* Students
+* Fees
+
+---
+
+## Table Schemas
+
+### Table: Departments
+
+| Attribute Name  | Data Type | Description/Notes                                     |
+| :-------------- | :-------- | :----------------------------------------------------- |
+| `department_id`  | INT       | PK, Department identifier                              |
+| `department_name` | VARCHAR(5)  | Department name                                        |
+
+### Table: Classes
+
+| Attribute Name  | Data Type   | Description/Notes                                      |
+| :-------------- | :---------- | :------------------------------------------------------ |
+| `class_id`      | INT        | PK, Class identifier                                   |
+| `class_name`    | NVARCHAR(50) | Class name                                             |
+| `room_number`   | VARCHAR(50) | Room number                                            |
+| `description`   | NVARCHAR(MAX) | Class description                                       |
+
+### Table: Lecturers
+
+| Attribute Name  | Data Type   | Description/Notes                                       |
+| :-------------- | :---------- | :------------------------------------------------------- |
+| `lecturer_id`   | INT        | PK, Lecturer identifier                                  |
+| `title`         | NVARCHAR(50) | Title (e.g., Eng., MSc)                                 |
+| `first_name`    | NVARCHAR(50) | First name                                              |
+| `last_name`     | NVARCHAR(50) | Last name                                               |
+| `email`         | NVARCHAR(50) | Email                                                   |
+| `phone_number`  | VARCHAR(50) | Phone number                                            |
+| `department_id` | INT        | FK, Department identifier                               |
+
+### Table: Department Heads
+
+| Attribute Name  | Data Type | Description/Notes                                         |
+| :-------------- | :-------- | :--------------------------------------------------------- |
+| `head_id`       | INT       | PK, Head identifier                                        |
+| `lecturer_id`   | INT       | FK, UNIQUE, Lecturer identifier                             |
+| `department_id` | INT       | FK, UNIQUE, Department identifier                           |
+
+### Table: Students
+
+| Attribute Name   | Data Type   | Description/Notes                                     |
+| :--------------- | :---------- | :----------------------------------------------------- |
+| `student_id`     | INT        | PK, Student identifier                                 |
+| `first_name`     | NVARCHAR(50) | First name                                              |
+| `last_name`      | NVARCHAR(50) | Last name                                               |
+| `birth_date`     | DATE        | Birth date                                              |
+| `country`        | NVARCHAR(50) | Country                                                 |
+| `city`           | NVARCHAR(50) | City                                                    |
+| `postal_code`    | NVARCHAR(50) | Postal code                                             |
+| `address`        | NVARCHAR(50) | Address                                                 |
+| `email`          | NVARCHAR(50) | Email                                                   |
+| `phone_number`   | VARCHAR(50) | Phone number                                            |
+| `enrollment_date` | DATE        | Enrollment date                                         |
+
+### Table: Grades
+
+| Attribute Name | Data Type   | Description/Notes                                       |
+| :------------- | :---------- | :------------------------------------------------------- |
+| `grade_id`     | INT        | PK, Grade number                                         |
+| `grade`        | NUMERIC(3,1) | Grade                                                    |
+| `student_id`   | INT        | FK, Student identifier                                  |
+| `class_id`     | INT        | FK, Class identifier                                    |
+| `lecturer_id`  | INT        | FK, Lecturer identifier                                 |
+| `date`         | DATETIME    | Date of grade issuance                                   |
+
+### Table: Enrollments
+
+| Attribute Name   | Data Type | Description/Notes                             |
+| :--------------- | :-------- | :---------------------------------------------- |
+| `enrollment_id` | INT       | PK                                              |
+| `student_id`    | INT       | FK, Student ID                                  |
+| `class_id`      | INT       | FK, Class ID                                    |
+| `enrollment_date` | DATE       | Enrollment date                                 |
+
+### Table: Payments
+
+| Attribute Name | Data Type    | Description/Notes                                      |
+| :------------- | :----------- | :------------------------------------------------------ |
+| `payment_id`   | INT         | PK, Payment identifier                                 |
+| `student_id`   | INT         | Student identifier                                   |
+| `amount`       | NUMERIC(12,2) | Payment amount                                        |
+| `due_date`     | DATE         | Due date for payment                                   |
+| `payment_date` | DATETIME     | ALLOWS NULLS, Date of payment                          |
+| `status`       | NVARCHAR(50) | FK, Department identifier (This seems incorrect, should likely be a status indicator) |
+
+---
+
+## Relationships Between Tables
+
+* **Departments** has a one-to-one relationship with **DepartmentHeads**.
+* **Lecturers** has a one-to-one relationship with **DepartmentHeads**.
+* **Lecturers** has a one-to-many relationship with **Classes**.
+* **Lecturers** has a many-to-one relationship with **Departments**.
+* **Classes** has a one-to-many relationship with **Enrollments**.
+* **Classes** has a one-to-many relationship with **Grades**.
+* **Classes** has a many-to-one relationship with **Lecturers**.
+* **Classes** has a many-to-one relationship with **Departments**.
+* **Students** has a one-to-many relationship with **Enrollments**.
+* **Students** has a one-to-many relationship with **Payments**.
+* **Students** has a one-to-many relationship with **Grades**.
+
+## Use Case Diagrams
+
+### Use Case: Adding a Student to a Class
+
+```
+[Image of a UML Use Case Diagram for Adding a Student to a Class]
+![Image Alt Text](https://drive.google.com/file/d/1xy17MGPScRmHuuY3xZoRGzpqee_PByvU/view?usp=sharing)
+
+
+Description:
+The diagram illustrates the process of adding a student to a class in a higher education system. It consists of the following steps:
+
+1.  **Commencement:** The student begins the process by enrolling in the university.
+2.  **Reviewing Classes:** The student browses the available classes to select those they wish to enroll in.
+3.  **Enrollment:** The student chooses the classes and enrolls in them.
+4.  **Payment:** The student makes a payment for the selected classes.
+5.  **Assignment to Classes:** After the payment is made, the student is officially assigned to the selected classes.
+
+In parallel to the above steps, the following processes occur in the background:
+
+*   **Adding Classes:** The Department Head adds new classes to the system.
+*   **Reviewing Enrollments:** The Department Head can review student enrollments in classes.
+*   **User Management:** The Department Head manages system users (students, lecturers, etc.).
+```
+
+### Use Case: Assigning a Lecturer to a Class
+
+```
+[Image of a UML Use Case Diagram for Assigning a Lecturer to a Class]
+![Image Alt Text](https://drive.google.com/file/d/1FJgdftTXX6Bmv1po8knmaMIKuKTmjTt-/view?usp=sharing)
+
+
+Description:
+The diagram presents the process of assigning a lecturer to a class in the university system. This process is divided into several steps involving two main actors: the Department Head and the Lecturer.
+
+Steps of the process:
+
+1.  **Manage Classes:** The Department Head initiates the process by selecting the "Manage Classes" option in the system.
+2.  **View List of Available Classes:** The system presents the Department Head with a list of all available classes that require a lecturer assignment.
+3.  **View List of Available Rooms:** The system displays a list of rooms where classes can be held. This allows the Department Head to choose the appropriate room for the given classes.
+4.  **View List of Lecturers:** The system presents the Department Head with a list of all available lecturers who can be assigned to the classes.
+5.  **Assign Lecturer to Classes:** The Department Head selects the appropriate lecturer from the list and assigns them to the selected classes.
+6.  **Update System:** The system updates the information about the lecturer's assignment to the classes, including the selected room.
+7.  **Class Information:** The lecturer receives information about the classes to which they have been assigned, along with information about rooms and other relevant details.
+8.  **Enter Availability List:** The lecturer can update their availability list in the system, informing about their preferences regarding dates and rooms.
+9.  **Update System:** The system updates the information about the lecturer's availability.
+```
+
+### Use Case: Entering a Grade for a Student
+
+```
+[Image of a UML Use Case Diagram for Entering a Grade for a Student]
+![Image Alt Text](https://drive.google.com/file/d/1EcVn1gglQgPdphR1sbXu9L2dgFZ-DzI5/view?usp=sharing)
+
+
+Description:
+The diagram illustrates the process of adding a grade for a student in the university system. This process consists of several steps involving two main actors: the Lecturer and the Student.
+
+Steps of the process:
+
+1.  **Class Participation:** The student participates in classes taught by the lecturer. This is a prerequisite for receiving a grade.
+2.  **Lecturer Assignment:** The lecturer must be assigned to the class to be able to issue grades to students.
+3.  **Student Enrollment:** The student must be enrolled in the class for the lecturer to be able to issue them a grade.
+4.  **Grade Assignment:** The lecturer assigns a grade to the student based on their achievements during the classes.
+5.  **Add Grade to Database (Update System):** The grade is entered into the system and saved in the database.
+6.  **Generate Report:** The system generates a report containing information about student grades.
+```
